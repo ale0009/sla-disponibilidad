@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cómo se hizo · ¿Cuánto puede caerse tu servicio?</title>
+  <meta name="description" content="De dónde sale la calculadora de SLA: el caso de clase con ITIL 4 (SLA y OLA), las fórmulas del presupuesto de error y de la disponibilidad compuesta, por qué los nueves engañan, la trampa de la serie, las limitaciones y una fe de erratas.">
+  <meta name="color-scheme" content="light dark">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bangers&family=IBM+Plex+Mono:wght@400;600&display=swap">
+  <link rel="stylesheet" href="../css/estilo.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23F9F9F7'/%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230A090A' stroke-width='3'/%3E%3Cpath d='M16 16V7' stroke='%230A090A' stroke-width='3'/%3E%3Cpath d='M16 16l6 4' stroke='%23CB433E' stroke-width='3.5'/%3E%3C/svg%3E">
+  <script type="module" src="../js/proceso.js"></script>
+</head>
+<body class="pagina-proceso">
+  <a class="saltar" href="#contenido">Saltar al contenido</a>
+  <header class="cabecera">
+    <span class="kanji" aria-hidden="true">設計</span>
+    <div class="titulo">
+      <p class="antetitulo">Proceso · ¿Cuánto puede caerse tu servicio?</p>
+      <h1>Cómo se hizo</h1>
+    </div>
+    <nav class="nav">
+      <a class="boton-linea" href="../">Volver a la herramienta</a>
+      <button type="button" class="boton-linea" id="tema" aria-label="Cambiar tema">Tema: auto</button>
+    </nav>
+  </header>
+
+  <main class="articulo" id="contenido">
+    <nav class="indice vineta" aria-label="En esta página">
+      <ol>
+        <li><a href="#caso">El caso de clase</a></li>
+        <li><a href="#acuerdos">SLA, OLA y UC</a></li>
+        <li><a href="#formulas">Las fórmulas</a></li>
+        <li><a href="#nueves">Los nueves engañan</a></li>
+        <li><a href="#serie">La trampa de la serie</a></li>
+        <li><a href="#diseno">Decisiones de diseño</a></li>
+        <li><a href="#limites">Limitaciones</a></li>
+        <li><a href="#erratas">Fe de erratas</a></li>
+        <li><a href="#fuentes">Fuentes</a></li>
+      </ol>
+    </nav>
+
+    <section id="caso" class="bloque">
+      <h2>1 · El caso de clase</h2>
+      <p>En Gerencia y formulación de proyectos, Mario y David (con su equipo) diseñaron con <strong>ITIL 4</strong> un <strong>sistema de reporte de errores para una empresa de videojuegos</strong>: los jugadores informan fallas del juego y el equipo las clasifica, prioriza y resuelve. El trabajo recorre la estrategia del servicio, el diseño (catálogo, proveedores, riesgos, presupuesto) y los niveles de servicio: un <strong>SLA</strong> con disponibilidad y tiempo de respuesta por servicio y un <strong>OLA</strong> con la escalación, las métricas mensuales y la encuesta trimestral.</p>
+      <p>Otros dos trabajos dieron el marco: una presentación sobre el modelo ITIL (estrategia, diseño, transición, operación y mejora continua del servicio) y un sistema inteligente de gestión de incidentes para una empresa de servicios de soporte TI, que trató el SLA como el estándar de tiempo y calidad en la atención de incidentes.</p>
+      <p>El SLA del caso prometía, por ejemplo, <strong>99,9 % 24/7</strong> para el soporte técnico. El trabajo nunca tradujo ese porcentaje a minutos ni comprobó si la arquitectura podía cumplirlo. Esta herramienta hace justo eso.</p>
+      <div class="vineta figura">
+        <h3>El SLA del caso, traducido a tiempo (caída permitida calculada aquí)</h3>
+        <div class="tabla-scroll">
+          <table class="tabla">
+            <caption>Porcentajes, horarios y tiempos de respuesta tal como están en el trabajo. La última columna se calculó aquí, con un mes de 30,42 días.</caption>
+            <thead><tr><th scope="col">Servicio</th><th scope="col">SLA</th><th scope="col">Horario</th><th scope="col">Respuesta</th><th scope="col">Puede caerse al mes</th></tr></thead>
+            <tbody id="t-caso"></tbody>
+          </table>
+        </div>
+        <p class="nota-fuente" id="caso-armado"></p>
+      </div>
+      <p class="nota-fuente">Se usan los trabajos solo para el caso y las cifras. No se publican nombres de compañeros, docentes, códigos ni de las empresas de los casos.</p>
+    </section>
+
+    <section id="acuerdos" class="bloque">
+      <h2>2 · SLA, OLA y UC</h2>
+      <p>En la práctica de <strong>gestión de niveles de servicio</strong> de ITIL 4 hay tres tipos de acuerdo. El trabajo de clase definió los dos primeros; el tercero (UC) no aparece, y es justo el que más pesa en una arquitectura en la nube.</p>
+      <dl class="glosario">
+        <dt>SLA</dt><dd><strong>Acuerdo de nivel de servicio</strong>, entre el proveedor y su cliente. Lo que se promete afuera: «99,9 % de disponibilidad, respuesta en 1 hora».</dd>
+        <dt>OLA</dt><dd><strong>Acuerdo de nivel operativo</strong>, entre equipos de la misma organización. Lo que cada equipo se compromete a hacer para que el SLA se cumpla: «operaciones restaura la base de datos en 30 minutos».</dd>
+        <dt>UC</dt><dd><strong>Contrato de apoyo</strong> (<em>underpinning contract</em>), con un proveedor externo: el SLA de la nube, del DNS o de la pasarela de pago.</dd>
+      </dl>
+      <p class="cita">La consecuencia práctica: <strong>un SLA no puede ser más alto que lo que permiten juntos sus OLA y UC.</strong> Si dependes en serie de tres proveedores que garantizan 99,9 % cada uno, no puedes firmar 99,9 % con tu cliente.</p>
+    </section>
+
+    <section id="formulas" class="bloque">
+      <h2>3 · Las fórmulas</h2>
+      <div class="dos-col">
+        <div>
+          <h3>Presupuesto de error (SRE de Google)</h3>
+          <p class="formula">caída permitida = (tiempo de servicio − mantenimiento excluido) × (1 − SLA)</p>
+          <p>Tiempo de servicio: 24×7 son 168 h por semana; 5×8 son 40. Año de 365 días, mes de 1/12 de año. El mantenimiento que el contrato excluye se descuenta antes, y la herramienta muestra aparte lo que el usuario ve en total.</p>
+          <h3>A partir de las fallas</h3>
+          <p class="formula">A = MTBF / (MTBF + MTTR)</p>
+          <p>MTBF: tiempo medio entre fallas. MTTR: tiempo medio para reparar. Despejando, el MTTR máximo para un objetivo es MTBF · (1 − A) / A.</p>
+        </div>
+        <div>
+          <h3>En serie (todos necesarios)</h3>
+          <p class="formula">A = A₁ · A₂ · … · Aₙ</p>
+          <h3>En paralelo (basta uno)</h3>
+          <p class="formula">A = 1 − (1 − A₁)(1 − A₂)…(1 − Aₙ)</p>
+          <h3>Requisito por pieza</h3>
+          <p class="formula">Aᵢ ≥ SLA<sup>1/n</sup></p>
+          <p>Para 99,9 % con 5 piezas iguales en serie, cada una debe dar 99,98 % (calculado aquí).</p>
+        </div>
+      </div>
+      <div class="vineta figura">
+        <h3>Lo que vale una copia más</h3>
+        <div class="tabla-scroll">
+          <table class="tabla">
+            <caption>Disponibilidad de n copias en paralelo de una misma pieza (calculado aquí).</caption>
+            <thead><tr><th scope="col">Copias</th><th scope="col">Pieza de 99 %</th><th scope="col">99,5 %</th><th scope="col">99,9 %</th></tr></thead>
+            <tbody id="t-redundancia"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="nueves" class="bloque">
+      <h2>4 · Por qué «los nueves» engañan</h2>
+      <p>99 % y 99,9 % suenan casi iguales. No lo son: <strong>cada nueve divide entre 10 el tiempo de caída permitido</strong>. 99 % deja caer el servicio más de 3 días y medio al año; 99,9 %, <strong>8 h 45 min</strong>; 99,99 %, menos de una hora. Y al revés: pasar de 99,9 % a 99,99 % no es «un 0,09 % más de trabajo», es diez veces menos margen.</p>
+      <figure class="vineta figura">
+        <h3>Caída permitida al año, 24×7 (escala logarítmica)</h3>
+        <div class="g-caja" id="g-nueves"></div>
+        <figcaption>Cada barra es un nivel de SLA. La escala es logarítmica: si fuera lineal, la barra de 99,999 % (5 min) no se vería al lado de la de 99 % (3 días y medio). En rojo, el 99,9 % del caso de clase.</figcaption>
+      </figure>
+      <div class="tabla-scroll">
+        <table class="tabla">
+          <caption>Presupuesto de error por periodo, 24×7, sin mantenimiento excluido (calculado aquí).</caption>
+          <thead><tr><th scope="col">SLA</th><th scope="col">Día</th><th scope="col">Semana</th><th scope="col">Mes</th><th scope="col">Año</th></tr></thead>
+          <tbody id="t-nueves"></tbody>
+        </table>
+      </div>
+      <p>Otra trampa: el <strong>mantenimiento excluido</strong>. Un 99,9 % con 4 horas de mantenimiento al mes fuera del SLA deja al usuario hasta 2 días y 8 horas al año sin servicio, un 99,35 % real (calculado aquí). Y el <strong>horario</strong>: un 99,9 % en 5×8 solo cubre 40 de las 168 horas de la semana.</p>
+    </section>
+
+    <section id="serie" class="bloque">
+      <h2>5 · La trampa de la composición en serie</h2>
+      <p>Un servicio web casi nunca es una sola pieza: hay DNS, red del proveedor, balanceador, servidores, base de datos, inicio de sesión, pasarela de pago… Si todas son necesarias, sus disponibilidades <strong>se multiplican</strong>, y el total siempre es peor que la peor pieza.</p>
+      <figure class="vineta figura">
+        <h3>Disponibilidad total al sumar componentes en serie</h3>
+        <div class="g-caja" id="g-serie"></div>
+        <figcaption id="serie-cifras"></figcaption>
+      </figure>
+      <p>La salida es la <strong>redundancia</strong>: duplicar el eslabón débil. Por eso la herramienta señala cuál es y calcula cuánto mejora el total con una copia más en paralelo. En la tienda de ejemplo, la base de datos única de 99,5 % causa el 74 % de la caída; duplicarla sube el total de 99,33 % a 99,83 %, y aun así no alcanza el 99,9 %: el siguiente eslabón débil es la pasarela de pago, y solo al duplicarla también el total llega a 99,92 % (calculado aquí).</p>
+    </section>
+
+    <section id="diseno" class="bloque">
+      <h2>6 · Decisiones de diseño</h2>
+      <ol class="decisiones">
+        <li><strong>Una pregunta, una respuesta grande.</strong> Lo primero que se ve es el SLA y, al lado, «8 h 45 min al año» en letra de cómic. El resto (periodos, nivel en «nueves») acompaña.</li>
+        <li><strong>Abre con un ejemplo que no cumple.</strong> La tienda en línea arranca en «No cumple el SLA de 99,9 %». Es lo que sorprende: piezas que parecen muy disponibles dan un total peor que lo prometido.</li>
+        <li><strong>Serie como cadena, paralelo como copias apiladas.</strong> Cada componente es una viñeta unida a la siguiente por un «×». Las réplicas se ven como hojas apiladas detrás de la viñeta, sin tener que dibujar un diagrama de bloques.</li>
+        <li><strong>El eslabón débil en rojo</strong>, con la parte de la caída que causa y un botón para duplicarlo. Aprender probando: se pulsa y el total cambia.</li>
+        <li><strong>Cifras supuestas, marcadas.</strong> Los porcentajes de los componentes de los ejemplos son supuestos de ejemplo, con un chip ámbar que lo dice; las cifras del SLA del caso son las de la fuente.</li>
+        <li><strong>Nada sale del navegador.</strong> No hay API: todo es cálculo local, así que no hay estado de carga ni de error de red.</li>
+      </ol>
+      <div class="dos-col">
+        <div class="vineta">
+          <h3>Paleta</h3>
+          <div class="paleta">
+            <span style="--c:#F9F9F7">Papel<br><code>#F9F9F7</code></span>
+            <span class="osc" style="--c:#0A090A;--sobre:#F9F9F7">Tinta<br><code>#0A090A</code></span>
+            <span style="--c:#CB433E;--sobre:#FFFFFF">Rojo: no cumple<br><code>#CB433E</code></span>
+            <span style="--c:#438FB8">Cian: cumple<br><code>#438FB8</code></span>
+            <span style="--c:#E8B44A">Ámbar: ejemplo<br><code>#E8B44A</code></span>
+            <span class="osc" style="--c:#141C33;--sobre:#F2ECE0">Noche (oscuro)<br><code>#141C33</code></span>
+          </div>
+        </div>
+        <div class="vineta">
+          <h3>Versiones</h3>
+          <div class="boceto">
+            <figure>
+              <svg class="grafica" viewBox="0 0 260 120" role="img" aria-label="Boceto 1: un formulario con una tabla de resultados">
+                <g fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="6" width="248" height="22"/><rect x="6" y="40" width="248" height="74"/></g>
+                <g stroke="currentColor" stroke-width="1.5"><line x1="6" y1="58" x2="254" y2="58"/><line x1="6" y1="76" x2="254" y2="76"/><line x1="6" y1="94" x2="254" y2="94"/><line x1="90" y1="40" x2="90" y2="114"/></g>
+              </svg>
+              <figcaption>Versión 1: una tabla de conversión. Correcta, pero no dice si tu servicio cumple.</figcaption>
+            </figure>
+            <figure>
+              <svg class="grafica" viewBox="0 0 260 120" role="img" aria-label="Boceto 2: cifra grande arriba y cadena de componentes con un eslabón resaltado">
+                <rect x="6" y="6" width="150" height="26" fill="currentColor" opacity="0.8"/>
+                <g fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="54" width="52" height="40"/><rect x="72" y="54" width="52" height="40"/><rect x="204" y="54" width="52" height="40"/></g>
+                <rect x="138" y="54" width="52" height="40" fill="#CB433E" stroke="currentColor" stroke-width="2"/>
+                <g font-size="16" fill="currentColor" font-family="Bangers, sans-serif"><text x="61" y="79">×</text><text x="127" y="79">×</text><text x="193" y="79">×</text></g>
+              </svg>
+              <figcaption>Versión 2 (la elegida): la cifra grande y la cadena con el eslabón débil en rojo.</figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="limites" class="bloque">
+      <h2>7 · Limitaciones</h2>
+      <ul>
+        <li><strong>Supone fallas independientes.</strong> Las fórmulas solo valen si una pieza no arrastra a otra. Dos servidores «redundantes» en la misma zona de la nube, con la misma versión del software o el mismo error de configuración caen juntos, y la redundancia real es mucho menor que la calculada.</li>
+        <li><strong>Disponibilidad no es todo.</strong> Un servicio lento, con errores parciales o que pierde datos puede estar «arriba». Los SLO modernos miden la proporción de peticiones buenas, no solo minutos arriba.</li>
+        <li><strong>El paralelo es ideal:</strong> supone que el cambio a la copia es instantáneo y que una sola copia aguanta toda la carga.</li>
+        <li><strong>Cadena simple.</strong> El armador modela bloques en serie con copias iguales en paralelo; arquitecturas con caminos alternativos distintos (k de n, rutas cruzadas) necesitan la función <code>evaluar()</code> del código.</li>
+        <li><strong>Promedios, no garantías.</strong> 99,9 % al año admite una sola caída de 8 horas o muchas de un minuto; el impacto para el negocio es muy distinto. MTBF y MTTR son medias.</li>
+        <li><strong>Cuentas del calendario.</strong> Año de 365 días y mes de 1/12 de año. Algunos contratos usan meses de 30 días o el mes calendario real; la diferencia es de minutos.</li>
+        <li>Los porcentajes de los componentes de los ejemplos son <strong>supuestos</strong>, no los SLA publicados por ningún proveedor.</li>
+      </ul>
+    </section>
+
+    <section id="erratas" class="bloque">
+      <h2>8 · Fe de erratas de los trabajos de clase</h2>
+      <div class="vineta errata">
+        <h3>Sistema de reporte de errores (empresa de videojuegos)</h3>
+        <ul>
+          <li>La primera fila del SLA habla de «optimizar las operaciones de la <strong>mina de carbón</strong>» y de «registros de funcionarios y empleados»; otra fila protege «los datos de los funcionarios y empleados». Es texto de otro proyecto: el caso es un sistema de reporte de errores para jugadores.</li>
+          <li>«Notificación de cualquier tiempo de inactividad <strong>no planificado</strong> con al menos 24 horas de anticipación»: lo no planificado no se puede avisar con antelación. Lo correcto: avisar el mantenimiento planificado con 24 horas, y las caídas no planificadas en cuanto se detectan.</li>
+          <li>Las consultas urgentes se atienden «en un plazo máximo de 1 hora» según el objetivo, pero la columna de tiempo de respuesta dice «máximo 30 minutos».</li>
+          <li>Las secciones de SLA y de OLA tienen el mismo número (2.5) y el mismo texto; el OLA real (escalación, métricas, encuesta, con responsables) está en la tabla posterior.</li>
+          <li>Disponibilidad «98 % (24/7)» para el aviso de caídas permite casi 15 horas al mes sin avisos (calculado aquí): muy por debajo del 99,9 % del soporte al que acompaña.</li>
+          <li>La portada conserva la fecha de plantilla «XX de Febrero de 20XX».</li>
+        </ul>
+      </div>
+      <div class="vineta errata">
+        <h3>Presentación «Modelo ITIL»</h3>
+        <ul>
+          <li>La diapositiva de los pilares de ITIL lleva por título «Machine Learning».</li>
+          <li>Define el diseño del servicio como el proceso que «mapea la disponibilidad de profesionales del sector». En ITIL, el diseño del servicio define servicios, procesos, niveles de servicio (SLA), capacidad, disponibilidad, continuidad y seguridad.</li>
+          <li>La diapositiva de transición del servicio incluye una frase publicitaria de un informe comercial que no tiene que ver con el tema.</li>
+          <li>Errata ortográfica en la portada: «Univercidad».</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="fuentes" class="bloque">
+      <h2>9 · Fuentes</h2>
+      <ol class="fuentes">
+        <li>Trabajos de clase de Mario Puerta, David Rincón y equipo: sistema de reporte de errores para una empresa de videojuegos (ITIL 4, SLA y OLA, 2024); presentación «Modelo ITIL»; sistema inteligente de gestión de incidentes para una empresa de servicios (2025). Material propio, no publicado aquí.</li>
+        <li>AXELOS. <em>ITIL 4: Service Level Management</em> y <em>ITIL 4: Availability Management</em>, guías de práctica, 2020. Definiciones de SLA, OLA y contrato de apoyo, y medición de la disponibilidad.</li>
+        <li>B. Beyer, C. Jones, J. Petoff y N. R. Murphy (eds.). <em>Site Reliability Engineering</em>. O'Reilly, 2016. Cap. 3, <a href="https://sre.google/sre-book/embracing-risk/">«Embracing Risk»</a> (presupuesto de error), y cap. 4, <a href="https://sre.google/sre-book/service-level-objectives/">«Service Level Objectives»</a>.</li>
+        <li>B. Beyer et al. (eds.). <em>The Site Reliability Workbook</em>. O'Reilly, 2018. <a href="https://sre.google/workbook/implementing-slos/">«Implementing SLOs»</a> y <a href="https://sre.google/workbook/error-budget-policy/">«Example Error Budget Policy»</a>.</li>
+        <li>B. Treynor, M. Dahlin, V. Rau y B. Beyer. <a href="https://queue.acm.org/detail.cfm?id=3096459">«The Calculus of Service Availability»</a>. <em>ACM Queue</em> 15(2), 2017. Disponibilidad de servicios con dependencias.</li>
+        <li>ISO/IEC. <a href="https://www.iso.org/standard/70636.html">ISO/IEC 20000-1:2018</a>, gestión del servicio, requisitos: gestión de niveles de servicio (8.3.3) y gestión de la disponibilidad del servicio (8.7.1).</li>
+      </ol>
+    </section>
+
+    <a class="volver" href="../">Calcular mi SLA →</a>
+  </main>
+
+  <footer class="pie">
+    <p>Proceso de la herramienta «¿Cuánto puede caerse tu servicio?». Código con licencia MIT.</p>
+    <p class="creditos"><a href="https://github.com/ale0009" target="_blank" rel="noopener">Mario Puerta «ale0009»</a> × <a href="https://www.linkedin.com/in/davidalexanderrinconcorredorkuronoma/" target="_blank" rel="noopener">David Rincón «Kuronoma»</a> <a href="#">Portafolio</a></p>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>¿Cuánto puede caerse tu servicio?</title>
+  <meta name="description" content="Escribe un SLA (99,9 %, 99,95 %…) y mira cuánto tiempo puede estar caído tu servicio al día, a la semana, al mes y al año. Arma tu arquitectura con componentes en serie y en paralelo y descubre si de verdad cumple lo que prometes.">
+  <meta name="color-scheme" content="light dark">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bangers&family=IBM+Plex+Mono:wght@400;600&display=swap">
+  <link rel="stylesheet" href="css/estilo.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23F9F9F7'/%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%230A090A' stroke-width='3'/%3E%3Cpath d='M16 16V7' stroke='%230A090A' stroke-width='3'/%3E%3Cpath d='M16 16l6 4' stroke='%23CB433E' stroke-width='3.5'/%3E%3C/svg%3E">
+  <script type="module" src="js/main.js"></script>
+</head>
+<body>
+  <a class="saltar" href="#presupuesto">Saltar al resultado</a>
+  <header class="cabecera">
+    <span class="kanji" aria-hidden="true">稼働</span>
+    <div class="titulo">
+      <p class="antetitulo">SLA · presupuesto de error · disponibilidad compuesta</p>
+      <h1>¿Cuánto puede caerse tu servicio?</h1>
+    </div>
+    <nav class="nav">
+      <a class="boton-linea" href="proceso/">Cómo se hizo</a>
+      <button type="button" class="boton-linea" id="tema" aria-label="Cambiar tema">Tema: auto</button>
+    </nav>
+  </header>
+
+  <main class="tablero">
+    <section class="entrada vineta" aria-labelledby="entrada-t">
+      <h2 id="entrada-t" class="etiqueta">1 · Tu SLA prometido</h2>
+      <div class="campo-sla">
+        <label for="sla" class="visual-oculto">Porcentaje de disponibilidad del SLA</label>
+        <input id="sla" type="text" inputmode="decimal" autocomplete="off" value="99,9" aria-describedby="ayuda-sla">
+        <span aria-hidden="true">%</span>
+      </div>
+      <p id="ayuda-sla" class="ayuda">Acuerdo de nivel de servicio (SLA): el porcentaje del tiempo que prometes que el servicio funciona.</p>
+      <div class="ejemplos" role="group" aria-label="Niveles comunes">
+        <button type="button" class="mini" data-sla="99">99</button>
+        <button type="button" class="mini" data-sla="99,5">99,5</button>
+        <button type="button" class="mini" data-sla="99,9">99,9</button>
+        <button type="button" class="mini" data-sla="99,95">99,95</button>
+        <button type="button" class="mini" data-sla="99,99">99,99</button>
+        <button type="button" class="mini" data-sla="99,999">99,999</button>
+      </div>
+      <div class="opciones">
+        <fieldset class="horario">
+          <legend class="etiqueta">Horario de servicio</legend>
+          <label><input type="radio" name="horario" value="24x7" checked> 24×7</label>
+          <label><input type="radio" name="horario" value="5x8"> 5×8 <small>(lun–vie, 8 h)</small></label>
+        </fieldset>
+        <div class="mant">
+          <label for="mant" class="etiqueta">Mantenimiento excluido</label>
+          <div class="con-unidad"><input id="mant" type="number" min="0" max="100" step="0.5" value="0" inputmode="decimal"><span>h / mes</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="hud vineta" id="presupuesto" aria-live="polite" aria-labelledby="hud-t">
+      <span class="onoma" aria-hidden="true">TIC-TAC</span>
+      <h2 id="hud-t" class="etiqueta">Presupuesto de error · puede caerse</h2>
+      <p class="grande"><span id="caida-anio">–</span> <small>al año</small></p>
+      <p class="nivel"><span class="chip" id="nivel">–</span> <span id="nivel-txt"></span></p>
+      <dl class="periodos" id="periodos"></dl>
+      <p class="aviso-mant" id="aviso-mant" hidden></p>
+    </section>
+
+    <section class="armador vineta" aria-labelledby="armador-t">
+      <div class="armador-cab">
+        <h2 id="armador-t">2 · Arma tu servicio</h2>
+        <div class="ejemplos" role="group" aria-label="Arquitecturas de ejemplo">
+          <span class="etiqueta">Cargar</span>
+          <button type="button" class="mini" data-ejemplo="tienda">Tienda en línea</button>
+          <button type="button" class="mini" data-ejemplo="clase">Caso de clase</button>
+          <button type="button" class="mini" data-ejemplo="vacio">En blanco</button>
+        </div>
+      </div>
+      <p class="nota-ejemplo" id="nota-ejemplo"></p>
+      <p class="ayuda leyenda-cadena"><strong>×</strong> en serie: si uno cae, cae todo; se multiplican. <strong>Réplicas</strong>: copias en paralelo; basta con que una viva: 1 − (1 − A)<sup>n</sup>.</p>
+      <ol class="cadena" id="cadena" aria-label="Componentes en serie"></ol>
+      <button type="button" class="boton-linea anadir" id="anadir">+ Añadir componente</button>
+
+      <div class="resultado" id="resultado" aria-live="polite" data-tono="frio">
+        <div class="res-total">
+          <p class="etiqueta">Disponibilidad total</p>
+          <p class="total" id="total">–</p>
+          <p class="sello" id="sello">–</p>
+        </div>
+        <div class="res-detalle">
+          <div class="medidor" role="img" id="medidor" aria-label="Total frente al SLA"><i id="medidor-i"></i><b id="medidor-meta"></b></div>
+          <p id="res-caida"></p>
+          <p id="res-debil"></p>
+          <p id="res-mejora"></p>
+          <button type="button" class="boton-tinta" id="duplicar" hidden>Duplicar el eslabón débil</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="mtbf vineta" aria-labelledby="mtbf-t">
+      <h2 id="mtbf-t">3 · Desde tus fallas reales</h2>
+      <p class="ayuda">MTBF: tiempo medio entre fallas. MTTR: tiempo medio para reparar. A = MTBF / (MTBF + MTTR).</p>
+      <div class="fila-mtbf">
+        <div><label for="mtbf" class="etiqueta">MTBF (horas)</label><input id="mtbf" type="number" min="0.1" step="any" value="720" inputmode="decimal"></div>
+        <div><label for="mttr" class="etiqueta">MTTR (horas)</label><input id="mttr" type="number" min="0" step="any" value="2" inputmode="decimal"></div>
+      </div>
+      <p class="mtbf-res" id="mtbf-res" aria-live="polite"></p>
+    </section>
+
+    <section class="acuerdos vineta" aria-labelledby="acuerdos-t">
+      <h2 id="acuerdos-t">SLA, OLA y UC (ITIL 4)</h2>
+      <svg class="esquema" viewBox="0 0 420 118" role="img" aria-labelledby="esquema-t">
+        <title id="esquema-t">El cliente firma un SLA con el proveedor del servicio. El proveedor respalda ese SLA con OLA, acuerdos con sus equipos internos, y con UC, contratos con proveedores externos.</title>
+        <rect class="caja" x="4" y="38" width="96" height="42"/><text x="52" y="64" text-anchor="middle">Cliente</text>
+        <rect class="caja fuerte" x="162" y="38" width="96" height="42"/><text x="210" y="57" text-anchor="middle">Proveedor</text><text x="210" y="72" text-anchor="middle" class="peq">de TI</text>
+        <rect class="caja" x="320" y="4" width="96" height="42"/><text x="368" y="23" text-anchor="middle">Equipos</text><text x="368" y="38" text-anchor="middle" class="peq">internos</text>
+        <rect class="caja" x="320" y="72" width="96" height="42"/><text x="368" y="91" text-anchor="middle">Proveedores</text><text x="368" y="106" text-anchor="middle" class="peq">externos</text>
+        <path class="linea roja" d="M100 59H162"/><text x="131" y="52" text-anchor="middle" class="sigla roja-t">SLA</text>
+        <path class="linea" d="M258 52L320 28"/><text x="286" y="30" text-anchor="middle" class="sigla">OLA</text>
+        <path class="linea" d="M258 66L320 90"/><text x="286" y="100" text-anchor="middle" class="sigla">UC</text>
+      </svg>
+      <dl class="glosario">
+        <dt>SLA</dt><dd>Acuerdo de nivel de servicio: lo que prometes <strong>al cliente</strong>.</dd>
+        <dt>OLA</dt><dd>Acuerdo de nivel operativo: lo que se prometen <strong>tus equipos internos</strong> para cumplir el SLA.</dd>
+        <dt>UC</dt><dd>Contrato de apoyo: lo que te garantiza <strong>un proveedor externo</strong> (nube, pasarela, DNS).</dd>
+      </dl>
+      <p class="ayuda">Regla: el SLA no puede ser más alto que lo que permiten juntos sus OLA y UC. Este armador lo comprueba.</p>
+    </section>
+  </main>
+
+  <footer class="pie">
+    <p>Cálculo en tu navegador, sin servidor. Supone que las fallas de los componentes son independientes; un año = 365 días y un mes = 1/12 de año. Basado en ITIL 4 (gestión de niveles de servicio y de disponibilidad) y en el libro de SRE de Google (presupuesto de error). No reemplaza un contrato ni una medición real.</p>
+    <p class="creditos"><a href="https://github.com/ale0009" target="_blank" rel="noopener">Mario Puerta «ale0009»</a> × <a href="https://www.linkedin.com/in/davidalexanderrinconcorredorkuronoma/" target="_blank" rel="noopener">David Rincón «Kuronoma»</a> <a href="#">Portafolio</a></p>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "name": "sla-disponibilidad",
+  "version": "1.0.0",
+  "description": "¿Cuánto puede caerse tu servicio? Traduce un SLA a tiempo de caída permitido y calcula la disponibilidad compuesta de una arquitectura en serie y en paralelo. Página estática sin build.",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "author": "Mario Alejandro Puerta Alarcón",
+  "scripts": { "test": "node --test" },
+  "engines": { "node": ">=20" }
+}
