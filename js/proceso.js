@@ -66,7 +66,7 @@ function pintarRedundancia() {
 
 // 4 · SLA del caso de clase (cifras de la fuente; caída calculada aquí)
 const SLA_CASO = [
-  { servicio: 'Gestión de registros (fila con la errata de la mina)', pct: 99.5, horario: '24x7', resp: 'máx. 2 h laborables' },
+  { servicio: 'Gestión de los reportes de errores (ver fe de erratas)', pct: 99.5, horario: '24x7', resp: 'máx. 2 h laborables' },
   { servicio: 'Aviso de caídas no planificadas', pct: 98, horario: '24x7', resp: 'máx. 1 h' },
   { servicio: 'Consultas urgentes de seguridad', pct: 99.8, horario: '24x7', resp: 'máx. 30 min' },
   { servicio: 'Medidas de seguridad de los datos', pct: 99.9, horario: '24x7', resp: 'máx. 4 h laborables' },

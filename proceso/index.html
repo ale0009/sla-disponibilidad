@@ -197,22 +197,18 @@
       <h2>8 · Fe de erratas de los trabajos de clase</h2>
       <div class="vineta errata">
         <h3>Sistema de reporte de errores (empresa de videojuegos)</h3>
+        <p>Cada punto dice qué decía el trabajo, qué es lo correcto y qué usa la herramienta.</p>
         <ul>
-          <li>La primera fila del SLA habla de «optimizar las operaciones de la <strong>mina de carbón</strong>» y de «registros de funcionarios y empleados»; otra fila protege «los datos de los funcionarios y empleados». Es texto de otro proyecto: el caso es un sistema de reporte de errores para jugadores.</li>
-          <li>«Notificación de cualquier tiempo de inactividad <strong>no planificado</strong> con al menos 24 horas de anticipación»: lo no planificado no se puede avisar con antelación. Lo correcto: avisar el mantenimiento planificado con 24 horas, y las caídas no planificadas en cuanto se detectan.</li>
-          <li>Las consultas urgentes se atienden «en un plazo máximo de 1 hora» según el objetivo, pero la columna de tiempo de respuesta dice «máximo 30 minutos».</li>
-          <li>Las secciones de SLA y de OLA tienen el mismo número (2.5) y el mismo texto; el OLA real (escalación, métricas, encuesta, con responsables) está en la tabla posterior.</li>
-          <li>Disponibilidad «98 % (24/7)» para el aviso de caídas permite casi 15 horas al mes sin avisos (calculado aquí): muy por debajo del 99,9 % del soporte al que acompaña.</li>
-          <li>La portada conserva la fecha de plantilla «XX de Febrero de 20XX».</li>
+          <li><strong>Texto pegado de otro proyecto.</strong> El trabajo era el SLA (acuerdo de nivel de servicio: lo que el proveedor promete y cómo se mide) de un sistema para que los jugadores de un videojuego reporten errores. <b>El trabajo decía</b>, en la primera fila del SLA, que el servicio de gestión de registros servía para «optimizar las operaciones de la <strong>mina de carbón</strong>» y manejar «registros de funcionarios y empleados»; otra fila prometía proteger «los datos de los funcionarios y empleados». Ese texto se copió de otro proyecto, el de una mina de carbón, y nunca se adaptó al videojuego. <b>Lo correcto:</b> esas filas debían hablar de los reportes de errores que envían los jugadores y de los datos de esos jugadores. <b>La herramienta usa</b> solo las cifras de esas filas, que no dependen del texto, y llama a la primera «gestión de los reportes de errores».</li>
+          <li><strong>Aviso de caídas.</strong> <b>El trabajo decía</b>: «notificación de cualquier tiempo de inactividad <strong>no planificado</strong> con al menos 24 horas de anticipación». <b>Lo correcto:</b> una caída no planificada no se puede avisar con antelación. Se avisa con 24 horas el mantenimiento <em>planificado</em>, y las caídas no planificadas, en cuanto se detectan. <b>La herramienta</b> no usa ese plazo: traduce los porcentajes a tiempo de caída.</li>
+          <li><strong>Consultas urgentes: ¿1 hora o 30 minutos?</strong> <b>El trabajo decía</b> en el objetivo que se atienden «en un plazo máximo de 1 hora», y en la columna de tiempo de respuesta, «máximo 30 minutos». <b>Lo correcto:</b> un SLA debe dar una sola cifra por compromiso; si no, no se puede medir si se cumplió. <b>La herramienta usa</b> la de la columna, 30 minutos, que es la más exigente.</li>
+          <li><strong>98 % para el aviso de caídas.</strong> <b>El trabajo decía</b> que el servicio que avisa de las caídas tiene una disponibilidad del 98 % (24/7). <b>Lo correcto:</b> 98 % permite casi 15 horas al mes con el aviso apagado (calculado aquí), justo el servicio que debe funcionar cuando lo demás falla; debería ser al menos tan alto como el 99,9 % del soporte al que acompaña. <b>La herramienta usa</b> el 98 % de la fuente y muestra esas horas en la tabla del caso.</li>
         </ul>
       </div>
       <div class="vineta errata">
         <h3>Presentación «Modelo ITIL»</h3>
         <ul>
-          <li>La diapositiva de los pilares de ITIL lleva por título «Machine Learning».</li>
-          <li>Define el diseño del servicio como el proceso que «mapea la disponibilidad de profesionales del sector». En ITIL, el diseño del servicio define servicios, procesos, niveles de servicio (SLA), capacidad, disponibilidad, continuidad y seguridad.</li>
-          <li>La diapositiva de transición del servicio incluye una frase publicitaria de un informe comercial que no tiene que ver con el tema.</li>
-          <li>Errata ortográfica en la portada: «Univercidad».</li>
+          <li><strong>Diseño del servicio.</strong> <b>El trabajo decía</b> que el diseño del servicio es el proceso que «mapea la disponibilidad de profesionales del sector». <b>Lo correcto:</b> en ITIL, el diseño del servicio define los servicios, sus procesos y sus niveles de servicio (SLA), además de la capacidad, la disponibilidad, la continuidad y la seguridad. <b>La herramienta usa</b> esa definición: calcula la disponibilidad que un SLA puede prometer.</li>
         </ul>
       </div>
     </section>
